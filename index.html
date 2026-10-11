@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anti-RFID Card Sleeve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#15191e;--mute:#5d6670;--line:#dde2e6;--bg:#f6f8f9;--card:#fff;--acc:#0b5d4b;--bad:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;padding-bottom:92px;background:var(--bg);color:var(--ink);font:16px/1.55 "Hind Siliguri",system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:0 18px}
+section{padding:26px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+h1{font-size:30px;line-height:1.2;margin:6px 0 8px}
+h2{font-size:20px;margin:0 0 4px}
+.brand{display:block;color:inherit;text-decoration:none;padding:14px 0 12px;text-align:center;font-size:20px;font-weight:700;letter-spacing:.3px;border-bottom:1px solid var(--line)}
+.mute{color:var(--mute);font-size:14px}
+.hero img{width:100%;border-radius:14px;display:block;margin-top:14px;background:#e7ecef}
+.price{margin-top:12px;line-height:1.2}
+.price b{display:block;font-size:34px;color:var(--acc)}
+.price .mute{display:block;margin-top:4px}
+.row{display:grid;grid-template-columns:72px 1fr;gap:6px 14px;align-items:center;padding:12px;margin-top:10px;background:var(--card);border:1.5px solid var(--line);border-radius:12px}
+.row.on{border-color:var(--acc);box-shadow:0 0 0 2px #0b5d4b22}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--line);flex:none}
+.req{color:#d62020;margin-left:3px;font-weight:700}
+.promo{background:var(--acc);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:16px;text-align:center;font-weight:700;font-size:18px;line-height:1.35}
+.payNote{margin-top:8px;padding:10px 12px;background:#fff4cc;border:1.5px solid #f0c431;border-radius:10px;font-weight:700;font-size:16px;line-height:1.35}
+.badge{display:inline-block;margin-top:4px;padding:2px 10px;background:#f0c431;color:#3b2f00;border-radius:999px;font-weight:700;font-size:13px}
+.promo small{display:block;font-weight:400;font-size:13px;opacity:.9}
+.ph{width:72px;height:72px;border-radius:10px;object-fit:cover;flex:none;cursor:zoom-in;background:#e7ecef}
+#zoomBox{display:none;position:fixed;inset:0;background:#000c;z-index:9;align-items:center;justify-content:center;padding:20px}
+#zoomBox img{max-width:100%;max-height:90vh;border-radius:12px}
+.row .ph{grid-row:1 / span 2}
+.row .t{line-height:1.3}
+.row .step{grid-column:2}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:22px;color:var(--ink)}
+.step input{width:52px;height:40px;text-align:center;border:1.5px solid var(--line);border-radius:10px;font:inherit}
+label{display:block;margin-top:14px;font-weight:600;font-size:15px}
+input[type=text],input[type=tel],input[type=email],textarea{width:100%;margin-top:5px;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.pay{display:block;margin-top:10px;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:400;cursor:pointer}
+.pay:has(input:checked){border-color:var(--acc);box-shadow:0 0 0 2px #0b5d4b22}
+.pay b{display:block}
+.sum{margin-top:18px;padding:14px;background:#fff;border-radius:12px;border:1.5px solid var(--line)}
+.sum div{display:flex;justify-content:space-between;padding:3px 0}
+.sum .g{border-top:1px solid var(--line);margin-top:6px;padding-top:8px;font-weight:700;font-size:18px}
+.btn{width:100%;margin-top:16px;padding:14px;border:0;border-radius:12px;background:var(--acc);color:#fff;font:600 17px inherit;font-family:inherit}
+.btn:disabled{background:#aab4ba}
+.msg{margin-top:12px;color:var(--bad);font-weight:600}
+.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:8px}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 2px;color:var(--mute)}
+#bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+#bar .in{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:12px}
+#bar .tot{flex:1;line-height:1.25}
+#bar .tot b{font-size:21px}
+#bar .btn{width:auto;margin:0;padding:12px 20px}
+#done{display:none;text-align:center}
+#done .id{font-size:46px;font-weight:700;color:var(--acc);line-height:1.1}
+#done .box{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-top:14px}
+.cp{margin-left:8px;padding:2px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:13px}
+@media (prefers-reduced-motion:no-preference){.row,.pay{transition:border-color .15s,box-shadow .15s}}
+</style>
+</head>
+<body>
+<script>
+/* ============ CONFIG — change settings here only ============ */
+const CFG = {
+  BRAND: "VesflyCode",
+  PRODUCT: "Anti-RFID Card Sleeve",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwRYwPrK-s5pNWx-QUVyIPmGdGoeFiIobwdS6Km-nxv-lIPY-vMu6QerpitbtfmpbYS/exec",  // from Deploy > Web app
+  CURRENCY: "৳",
+  PRICE_PER_PIECE: 35,
+  MIN_TOTAL_QTY: 10,          // below this, Order buttons stay disabled
+  MAX_TOTAL_QTY: 100,
+  DELIVERY_CHARGE: 50,        // flat rate
+  FREE_DELIVERY_IF_PREPAID: true,
+  DEFAULT_PAYMENT: "",        // "" = customer must choose; or "cod" / "prepaid"
+  COOLDOWN_MS: 1000,          // wait time between submit attempts
+  HERO_IMAGE: "images/rfid.jpg",             // e.g. "images/hero.jpg" — empty = placeholder
+  COLORS: [                   // names must match Code.gs exactly
+    // image: your product photo, e.g. "images/black.jpg". Empty = shows the color dot.
+    { name: "Black", bn: "কালো", hex: "#1c1f22", image: "images/silver.jpg" },
+    { name: "Brown", bn: "বাদামী", hex: "#6b4429", image: "" },
+    { name: "Navy",  bn: "নেভি",  hex: "#1b2a4a", image: "" }
+  ],
+  PAYMENT_ACCOUNTS: [         // shown after a prepaid order
+    { name: "bKash (Personal)", number: "01XXXXXXXXX" } // ,
+    // { name: "Nagad (Personal)", number: "01XXXXXXXXX" }
+  ]
+};
+/* ============================================================ */
+</script>
+
+<main>
+<a class="brand" id="brand" href="./"></a>
+
+<section class="hero" id="heroSec">
+  <h1 id="pname"></h1>
+  <div>আপনার ওয়ালেটের কার্ডের জন্য পাতলা slim sleeve। ডেবিট, ক্রেডিট ও আইডি কার্ড সহজে ঢোকে।</div>
+  <div class="price"><b id="pack"></b><span class="mute" id="each"></span></div>
+  <img id="hero" alt="Card sleeve" width="560" height="364">
+</section>
+
+<section id="pick">
+  <h2>রং ও পরিমাণ / Colors &amp; quantity<span class="req">*</span></h2>
+  <div class="mute" id="minhint"></div>
+  <div id="rows"></div>
+</section>
+
+<section id="formSec">
+  <div class="promo" id="promo">অগ্রিম পেমেন্ট করলে ডেলিভারি চার্জ সম্পূর্ণ ফ্রি!<small>Prepay and get free delivery</small></div>
+  <h2>ডেলিভারি তথ্য / Delivery details</h2>
+  <div class="mute"><span class="req" style="margin:0">*</span> লাল তারকা চিহ্নিত ঘর আবশ্যক / required</div>
+  <form id="f" novalidate autocomplete="on">
+    <label>নাম / Full name<span class="req">*</span><input type="text" id="name" name="name" maxlength="200" autocomplete="name"></label>
+    <label>ফোন / Phone (01XXXXXXXXX)<span class="req">*</span><input type="tel" id="phone" name="phone" maxlength="14" inputmode="numeric" autocomplete="tel"></label>
+    <label>পূর্ণ ঠিকানা / Full address<span class="req">*</span><textarea id="address" name="address" rows="3" maxlength="500" autocomplete="street-address"></textarea></label>
+    <label>নোট (ঐচ্ছিক) / Note (optional)<textarea id="note" name="note" rows="2" maxlength="500"></textarea></label>
+    <div class="hp" aria-hidden="true"><label>Website<input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+    <label style="margin-top:20px">পেমেন্ট / Payment<span class="req">*</span></label>
+    <div class="payNote" id="payNote">অগ্রিম পেমেন্ট করলে ডেলিভারি চার্জ ফ্রি! <span class="mute">(Prepay = free delivery)</span></div>
+    <label class="pay"><input type="radio" name="pay" value="cod"> <b>ক্যাশ অন ডেলিভারি / Cash on delivery</b><span class="mute" id="codNote"></span></label>
+    <label class="pay"><input type="radio" name="pay" value="prepaid"> <b>অগ্রিম পেমেন্ট / Prepayment</b><span class="badge">ডেলিভারি চার্জ ফ্রি!</span></label>
+
+    <div class="sum">
+      <div><span id="sL1"></span><span id="sV1"></span></div>
+      <div><span>ডেলিভারি / Delivery</span><span id="sV2"></span></div>
+      <div class="g"><span>মোট / Total</span><span id="sV3"></span></div>
+    </div>
+    <div class="msg" id="err" role="alert"></div>
+    <button class="btn" id="submit" type="submit">অর্ডার করুন / Place order</button>
+  </form>
+</section>
+
+<section id="done">
+  <h2>অর্ডার পেয়েছি! / Order received</h2>
+  <div class="mute">আপনার অর্ডার আইডি / Your order ID</div>
+  <div class="id" id="oid"></div>
+  <button class="cp" id="cpId" type="button">Copy</button>
+  <div class="box" id="doneBox"></div>
+</section>
+
+<section>
+  <h2>RFID-ব্লকিং মানে কী? / What is RFID blocking?</h2>
+  <p class="mute">কিছু কার্ড ও আইডিতে ছোট RFID/NFC চিপ থাকে, যা খুব কাছ থেকে রিডার স্ক্যান করতে পারে। এই sleeve-এর ভেতরের ধাতব স্তর সেই সংকেত কমাতে বা আটকাতে সাহায্য করে। এটি সম্পূর্ণ নিরাপত্তার গ্যারান্টি নয়। কার্ড হারানো, অনলাইন প্রতারণা বা ম্যাগনেটিক স্ট্রাইপ থেকে সুরক্ষা দেয় না।</p>
+  <h2 style="margin-top:20px">প্রশ্নোত্তর / FAQ</h2>
+  <details><summary>কতদিনে পাব? / Delivery time?</summary><p>অর্ডার কনফার্মের পর আমরা কুরিয়ারে পাঠাই। সময় জানাতে আমরা ফোন করব।</p></details>
+  <details><summary>কমপক্ষে কত পিস? / Minimum order?</summary><p id="faqMin"></p></details>
+  <details><summary>প্রিপেমেন্ট কীভাবে? / How does prepayment work?</summary><p>অর্ডার করলে একটি আইডি পাবেন। নির্দিষ্ট অ্যাকাউন্টে টাকা পাঠানোর সময় Reference-এ সেই আইডি লিখবেন। ডেলিভারি ফ্রি।</p></details>
+  <details><summary>সব কার্ডে কাজ করে? / Works with every card?</summary><p>এটি কার্ডের RFID/NFC সংকেত কমাতে সাহায্য করে। ফলাফল কার্ড ও রিডারভেদে আলাদা হতে পারে।</p></details>
+</section>
+<div class="mute" style="text-align:center;padding:18px 0 4px;font-size:12px">v3 · 11 Oct 2026</div>
+</main>
+
+<div id="zoomBox" onclick="this.style.display='none'"><img id="zoom" alt=""></div>
+<div id="bar"><div class="in">
+  <div class="tot"><b id="bT"></b><div class="mute" id="bN"></div></div>
+  <button class="btn" id="bBtn" type="button">অর্ডার / Order</button>
+</div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const money = n => CFG.CURRENCY + n;
+const qty = {}; CFG.COLORS.forEach(c => qty[c.name] = 0);
+let sending = false, lastTry = 0, requestId = newId();
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+/* ---- static text from config ---- */
+document.title = CFG.PRODUCT + " | " + CFG.BRAND;
+$("brand").textContent = CFG.BRAND;
+$("pname").textContent = CFG.PRODUCT;
+$("pack").textContent = "10 পিস = " + money(10 * CFG.PRICE_PER_PIECE);
+$("each").textContent = "প্রতি পিস " + money(CFG.PRICE_PER_PIECE) + " / per piece";
+$("minhint").textContent = "মোট কমপক্ষে " + CFG.MIN_TOTAL_QTY + " পিস নিতে হবে (minimum " + CFG.MIN_TOTAL_QTY + " pcs, mix colors freely)";
+$("faqMin").textContent = "কমপক্ষে " + CFG.MIN_TOTAL_QTY + " পিস, রং মিলিয়ে নিতে পারবেন। Minimum " + CFG.MIN_TOTAL_QTY + " pieces in total.";
+$("codNote").textContent = "ডেলিভারি চার্জ " + money(CFG.DELIVERY_CHARGE) + " / Delivery " + money(CFG.DELIVERY_CHARGE);
+$("hero").src = CFG.HERO_IMAGE || "data:image/svg+xml;utf8," + encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 560 364'><rect width='560' height='364' fill='#e7ecef'/><rect x='170' y='62' width='220' height='240' rx='16' fill='#202428'/><rect x='186' y='112' width='188' height='150' rx='10' fill='#343b41'/><text x='280' y='336' font-size='15' text-anchor='middle' fill='#788088' font-family='sans-serif'>Replace this image</text></svg>");
+if (!CFG.FREE_DELIVERY_IF_PREPAID) { $("promo").style.display = "none"; $("payNote").style.display = "none"; }
+if (CFG.DEFAULT_PAYMENT) document.querySelector("input[name=pay][value=" + CFG.DEFAULT_PAYMENT + "]").checked = true;
+
+/* ---- color rows ---- */
+function sleeveSvg(hex) { // placeholder shown until you add a real photo in CFG.COLORS
+  return "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><rect width='72' height='72' fill='#e7ecef'/><rect x='16' y='9' width='40' height='54' rx='6' fill='" + hex + "'/><rect x='21' y='22' width='30' height='34' rx='3' fill='#fff' fill-opacity='.18'/></svg>");
+}
+CFG.COLORS.forEach(c => {
+  const r = document.createElement("div"); r.className = "row"; r.id = "row_" + c.name;
+  r.innerHTML = '<img class="ph" src="' + (c.image || sleeveSvg(c.hex)) + '" alt="' + c.name + '" width="72" height="72" loading="lazy">' +
+    '<div class="t"><b>' + c.name + ' / ' + c.bn + '</b><div class="mute">' + money(CFG.PRICE_PER_PIECE) + ' / পিস</div></div>' +
+    '<div class="step"><button type="button" aria-label="Decrease ' + c.name + '">−</button>' +
+    '<input type="number" inputmode="numeric" min="0" max="' + CFG.MAX_TOTAL_QTY + '" value="0" aria-label="' + c.name + ' quantity">' +
+    '<button type="button" aria-label="Increase ' + c.name + '">+</button></div>';
+  const [minus, plus] = r.querySelectorAll("button"), inp = r.querySelector("input"), im = r.querySelector(".ph");
+  if (im) im.onclick = () => { $("zoom").src = im.src; $("zoomBox").style.display = "flex"; };
+  minus.onclick = () => set(c.name, qty[c.name] - 1);
+  plus.onclick = () => set(c.name, qty[c.name] + 1);
+  inp.oninput = () => set(c.name, parseInt(inp.value, 10) || 0, true);
+  inp.onblur = () => inp.value = qty[c.name];
+  $("rows").appendChild(r);
+});
+function set(name, v, typing) {
+  const others = total() - qty[name];
+  qty[name] = Math.max(0, Math.min(v, CFG.MAX_TOTAL_QTY - others));
+  const r = $("row_" + name); r.classList.toggle("on", qty[name] > 0);
+  if (!typing) r.querySelector("input").value = qty[name];
+  update();
+}
+function total(){ return Object.values(qty).reduce((a, b) => a + b, 0); }
+function payment(){ const p = document.querySelector("input[name=pay]:checked"); return p ? p.value : ""; }
+function delivery(){ if (!payment()) return 0; return (payment() === "prepaid" && CFG.FREE_DELIVERY_IF_PREPAID) ? 0 : CFG.DELIVERY_CHARGE; }
+
+/* ---- live summary + bottom bar ---- */
+function update() {
+  const q = total(), billQty = Math.max(q, CFG.MIN_TOTAL_QTY); // price never drops below the minimum pack
+  const items = billQty * CFG.PRICE_PER_PIECE, d = delivery(), g = items + d;
+  const ok = q >= CFG.MIN_TOTAL_QTY;
+  $("sL1").textContent = (q < CFG.MIN_TOTAL_QTY ? "ন্যূনতম " + billQty : q) + " পিস × " + money(CFG.PRICE_PER_PIECE);
+  $("sV1").textContent = money(items);
+  $("sV2").textContent = !payment() ? "পেমেন্ট বেছে নিন" : d ? money(d) : "ফ্রি / Free";
+  $("sV3").textContent = money(g);
+  $("bT").textContent = money(g);
+  $("bN").textContent = q + " পিস" + (ok ? "" : " — আরও " + (CFG.MIN_TOTAL_QTY - q) + " পিস লাগবে");
+  $("bBtn").disabled = !ok;
+  $("submit").disabled = !ok || sending;
+}
+document.querySelectorAll("input[name=pay]").forEach(i => i.onchange = update);
+// Bottom bar button: if the form is complete it places the order, otherwise it jumps to the first missing field.
+$("bBtn").onclick = () => {
+  const missing = ["name", "phone", "address"].find(id => !$(id).value.trim());
+  if (missing) { $(missing).scrollIntoView({ behavior: "smooth", block: "center" }); $(missing).focus({ preventScroll: true }); }
+  else if (!payment()) { $("payNote").scrollIntoView({ behavior: "smooth", block: "center" }); $("err").textContent = "পেমেন্ট পদ্ধতি বেছে নিন / Choose a payment method."; }
+  else $("submit").click();
+};
+
+/* ---- submit ---- */
+// Sends the order. If the network or Google is slow or fails, it quietly retries up to 3 times with the
+// SAME requestId, so the server never saves the order twice. Returns {ok:true,...} or {ok:false,error}.
+async function postOrder(payload) {
+  let last = { ok: false, error: "net" };
+  for (let i = 0; i < 3; i++) {
+    if (i) { $("submit").textContent = "আবার চেষ্টা করছি… / Retrying…"; await new Promise(r => setTimeout(r, 1500 * i)); }
+    try {
+      const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 30000);
+      // text/plain avoids the CORS preflight that Apps Script cannot answer.
+      const res = await fetch(CFG.SCRIPT_URL, { method: "POST", signal: ctl.signal,
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+      clearTimeout(timer);
+      const data = await res.json();
+      if (data.ok || !/^Server error/.test(data.error || "")) return data;
+      last = data;
+    } catch (e) { last = { ok: false, error: "net" }; }
+  }
+  return last;
+}
+$("f").onsubmit = async ev => {
+  ev.preventDefault();
+  if (sending || Date.now() - lastTry < CFG.COOLDOWN_MS) return;
+  const err = m => { $("err").textContent = m; };
+  const v = id => $(id).value.trim();
+  const phone = v("phone").replace(/[\s-]/g, "").replace(/^\+?88/, "");
+  if (total() < CFG.MIN_TOTAL_QTY) return err("কমপক্ষে " + CFG.MIN_TOTAL_QTY + " পিস বেছে নিন।");
+  if (!v("name")) return err("নাম লিখুন / Enter your name.");
+  if (!/^01[3-9][0-9]{8}$/.test(phone)) return err("ফোন নম্বর 01XXXXXXXXX ফরম্যাটে দিন।");
+  if (!v("address")) return err("পূর্ণ ঠিকানা লিখুন / Enter your full address.");
+  if (!payment()) return err("পেমেন্ট পদ্ধতি বেছে নিন / Choose a payment method.");
+  if (CFG.SCRIPT_URL.indexOf("PASTE") === 0) return err("Site is not set up yet: add SCRIPT_URL in CFG.");
+  err(""); sending = true; lastTry = Date.now();
+  $("submit").disabled = true; $("submit").textContent = "পাঠানো হচ্ছে… / Sending…";
+  const payload = { requestId, items: { ...qty }, name: v("name"), phone, address: v("address"),
+    note: v("note"), payment: payment(), website: $("website").value };
+  const data = await postOrder(payload);
+  if (data.ok) done(data);
+  else err(data.error === "net"
+    ? "ইন্টারনেট সংযোগে সমস্যা। আবার Order চাপুন, একই অর্ডার দুইবার হবে না। / Connection problem. Tap Order again; the same order will not be duplicated."
+    : (data.error || "Something went wrong. Please try again."));
+  sending = false; $("submit").textContent = "অর্ডার করুন / Place order"; update();
+};
+
+function done(d) {
+  const prepaid = d.payment === "prepaid";
+  $("oid").textContent = d.orderId;
+  let h = "<b>" + d.qty + " পিস</b> — " + money(d.itemsTotal) + " + ডেলিভারি " + (d.delivery ? money(d.delivery) : "ফ্রি") +
+    "<br><b>মোট / Total: " + money(d.grandTotal) + "</b><br><br>";
+  if (prepaid) {
+    h += "নিচের অ্যাকাউন্টে <b>" + money(d.grandTotal) + "</b> পাঠান এবং Reference-এ অর্ডার আইডি <b>" + d.orderId + "</b> লিখুন।<br>" +
+      "Pay to this account using order ID <b>" + d.orderId + "</b> as the reference.<br><br>" +
+      CFG.PAYMENT_ACCOUNTS.map(a => a.name + ": <b>" + a.number + "</b> <button class='cp' data-c='" + a.number + "'>Copy</button>").join("<br>");
+  } else {
+    h += "Order received, we will call you to confirm. / আমরা ফোন করে কনফার্ম করব।";
+  }
+  $("doneBox").innerHTML = h;
+  $("doneBox").querySelectorAll("[data-c]").forEach(b => b.onclick = () => copy(b, b.dataset.c));
+  $("cpId").onclick = () => copy($("cpId"), String(d.orderId));
+  ["heroSec", "pick", "formSec", "bar"].forEach(i => $(i).style.display = "none");
+  $("done").style.display = "block";
+  requestId = newId(); window.scrollTo(0, 0);
+}
+function copy(btn, t) {
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => btn.textContent = "Copied", () => btn.textContent = t);
+}
+// Brand name = home: reloads the page to the product view (or scrolls to the top).
+$("brand").onclick = e => {
+  e.preventDefault();
+  if ($("done").style.display === "block") location.reload(); else window.scrollTo({ top: 0, behavior: "smooth" });
+};
+update();
+</script>
+</body>
+</html>
